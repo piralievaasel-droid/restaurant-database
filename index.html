@@ -25,20 +25,22 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         h1, h2 { margin-top: 0; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f0f2f5;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
         .mermaid {
             background: #fafafa;
             padding: 1rem;
@@ -49,12 +51,12 @@
 <body>
 
 <div class="card">
-    <h1>🍔 База данных сервиса доставки еды</h1>
+    <h1>База данных сервиса доставки еды</h1>
     <p>Проект включает: пользователи (клиенты, курьеры, админы), рестораны, меню, заказы, платежи, доставку, промокоды, отзывы.</p>
 </div>
 
 <div class="card">
-    <h2>📊 ER-диаграмма связей таблиц</h2>
+    <h2>ER-диаграмма связей таблиц</h2>
     <pre class="mermaid">
 erDiagram
     users {
@@ -196,11 +198,15 @@ erDiagram
     </table>
 
     <h3>Отзывы (reviews)</h3>
-    表
+<table>
+    <thead>
         <tr><th>review_id</th><th>restaurant_id</th><th>client_id</th><th>rating</th></tr>
+    </thead>
+    <tbody>
         <tr><td>1</td><td>1</td><td>1</td><td>5</td></tr>
         <tr><td>2</td><td>2</td><td>2</td><td>4</td></tr>
-    </table>
+    </tbody>
+</table>
 
     <p>✅ Полная структура и все связи описаны в ER-диаграмме. SQL-скрипт создания таблиц и запросы вы можете посмотреть в файле <code>schema.sql</code> в репозитории.</p>
 </div>
