@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>Перенаправление...</title>
     <script>
-        sessionStorage.redirect = location.href;
-        location.replace('/');
+        // Получаем текущий путь без домена, убираем возможный фрагмент после #
+        var path = window.location.pathname;
+        // Перенаправляем на главную страницу репозитория
+        location.replace('./');
     </script>
 </head>
 <body>
