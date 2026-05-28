@@ -2,133 +2,208 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>ER-диаграмма базы данных доставки еды</title>
+    <title>ER-диаграмма и данные базы данных доставки</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             mermaid.initialize({ startOnLoad: true, theme: 'default' });
         });
     </script>
     <style>
         body {
-            font-family: system-ui, sans-serif;
-            max-width: 1200px;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1300px;
             margin: 2rem auto;
             padding: 0 1rem;
+            background: #f5f7fb;
         }
-        .container {
+        .card {
             background: white;
-            border-radius: 8px;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1, h2 { margin-top: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f2f5;
+        }
+        .mermaid {
+            background: #fafafa;
             padding: 1rem;
+            border-radius: 12px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>ER-диаграмма базы данных доставки еды</h1>
-    <p>Схема включает пользователей, рестораны, заказы, платежи, доставку, промокоды и отзывы.</p>
-    <pre class="mermaid">
-        erDiagram
-            users {
-                bigint user_id PK
-                varchar full_name
-                varchar phone UK
-                varchar email
-                enum role "client, courier, admin"
-            }
-            restaurants {
-                bigint restaurant_id PK
-                varchar name
-                decimal rating_avg
-            }
-            restaurant_addresses {
-                bigint address_id PK
-                bigint restaurant_id FK
-                varchar city
-                varchar street
-                varchar house
-            }
-            menu_categories {
-                bigint category_id PK
-                bigint restaurant_id FK
-                varchar name
-            }
-            menu_items {
-                bigint item_id PK
-                bigint category_id FK
-                varchar name
-                decimal price
-                tinyint is_available
-            }
-            orders {
-                bigint order_id PK
-                bigint client_id FK
-                bigint restaurant_id FK
-                enum status "created,paid,assigned,picked_up,delivered,cancelled"
-                varchar delivery_address
-                decimal subtotal_amount
-                decimal discount_amount
-                decimal total_amount
-                datetime created_at
-            }
-            order_items {
-                bigint order_item_id PK
-                bigint order_id FK
-                bigint item_id FK
-                int qty
-                decimal unit_price
-                decimal line_total
-            }
-            payments {
-                bigint payment_id PK
-                bigint order_id FK
-                enum method "card,cash,wallet"
-                enum status "pending,succeeded,failed"
-                datetime paid_at
-                decimal amount
-            }
-            deliveries {
-                bigint delivery_id PK
-                bigint order_id FK
-                bigint courier_id FK
-                enum status "assigned,picked_up,delivered"
-                datetime assigned_at
-                datetime delivered_at
-            }
-            promo_codes {
-                bigint promo_id PK
-                varchar code
-                decimal discount_value
-            }
-            order_promos {
-                bigint order_id PK
-                bigint promo_id PK
-                decimal applied_discount
-            }
-            reviews {
-                bigint review_id PK
-                bigint restaurant_id FK
-                bigint client_id FK
-                bigint order_id FK
-                int rating
-            }
-            restaurants ||--o{ restaurant_addresses : "имеет"
-            restaurants ||--o{ menu_categories : "содержит"
-            menu_categories ||--o{ menu_items : "включает"
-            users ||--o{ orders : "создаёт (client)"
-            restaurants ||--o{ orders : "принимает"
-            orders ||--|{ order_items : "состоит из"
-            menu_items ||--o{ order_items : "ссылается"
-            orders ||--|| payments : "имеет"
-            orders ||--|| deliveries : "имеет"
-            users ||--o{ deliveries : "выполняет (courier)"
-            orders ||--o{ order_promos : "применяет"
-            promo_codes ||--o{ order_promos : "используется в"
-            restaurants ||--o{ reviews : "получает"
-            users ||--o{ reviews : "пишет (client)"
-            orders ||--|| reviews : "оценивается"
-    </pre>
-    <p><em>Диаграмма связей таблиц. При обновлении страницы вы останетесь на этом же месте (благодаря настройке 404.html).</em></p>
+
+<div class="card">
+    <h1>🍔 База данных сервиса доставки еды</h1>
+    <p>Проект включает: пользователи (клиенты, курьеры, админы), рестораны, меню, заказы, платежи, доставку, промокоды, отзывы.</p>
 </div>
+
+<div class="card">
+    <h2>📊 ER-диаграмма связей таблиц</h2>
+    <pre class="mermaid">
+erDiagram
+    users {
+        bigint user_id PK
+        varchar full_name
+        varchar phone UK
+        varchar email
+        enum role "client, courier, admin"
+    }
+    restaurants {
+        bigint restaurant_id PK
+        varchar name
+        decimal rating_avg
+    }
+    restaurant_addresses {
+        bigint address_id PK
+        bigint restaurant_id FK
+        varchar city
+        varchar street
+        varchar house
+    }
+    menu_categories {
+        bigint category_id PK
+        bigint restaurant_id FK
+        varchar name
+    }
+    menu_items {
+        bigint item_id PK
+        bigint category_id FK
+        varchar name
+        decimal price
+        tinyint is_available
+    }
+    orders {
+        bigint order_id PK
+        bigint client_id FK
+        bigint restaurant_id FK
+        enum status "created,paid,assigned,picked_up,delivered,cancelled"
+        varchar delivery_address
+        decimal subtotal_amount
+        decimal discount_amount
+        decimal total_amount
+        datetime created_at
+    }
+    order_items {
+        bigint order_item_id PK
+        bigint order_id FK
+        bigint item_id FK
+        int qty
+        decimal unit_price
+        decimal line_total
+    }
+    payments {
+        bigint payment_id PK
+        bigint order_id FK
+        enum method "card,cash,wallet"
+        enum status "pending,succeeded,failed"
+        datetime paid_at
+        decimal amount
+    }
+    deliveries {
+        bigint delivery_id PK
+        bigint order_id FK
+        bigint courier_id FK
+        enum status "assigned,picked_up,delivered"
+        datetime assigned_at
+        datetime delivered_at
+    }
+    promo_codes {
+        bigint promo_id PK
+        varchar code
+        decimal discount_value
+    }
+    order_promos {
+        bigint order_id PK
+        bigint promo_id PK
+        decimal applied_discount
+    }
+    reviews {
+        bigint review_id PK
+        bigint restaurant_id FK
+        bigint client_id FK
+        bigint order_id FK
+        int rating
+    }
+    restaurants ||--o{ restaurant_addresses : "имеет"
+    restaurants ||--o{ menu_categories : "содержит"
+    menu_categories ||--o{ menu_items : "включает"
+    users ||--o{ orders : "создаёт (client)"
+    restaurants ||--o{ orders : "принимает"
+    orders ||--|{ order_items : "состоит из"
+    menu_items ||--o{ order_items : "ссылается"
+    orders ||--|| payments : "имеет"
+    orders ||--|| deliveries : "имеет"
+    users ||--o{ deliveries : "выполняет (courier)"
+    orders ||--o{ order_promos : "применяет"
+    promo_codes ||--o{ order_promos : "используется в"
+    restaurants ||--o{ reviews : "получает"
+    users ||--o{ reviews : "пишет (client)"
+    orders ||--|| reviews : "оценивается"
+    </pre>
+</div>
+
+<div class="card">
+    <h2>📋 Данные из базы (примеры таблиц)</h2>
+    <p><em>GitHub Pages не умеет выполнять SQL, поэтому данные показаны статически из вашего <code>schema.sql</code>. Это реальные INSERT-запросы из вашего проекта.</em></p>
+
+    <h3>Пользователи (users)</h3>
+    </td>
+        <tr><th>user_id</th><th>role</th><th>full_name</th><th>phone</th></tr>
+        <tr><td>1</td><td>client</td><td>Иван Петров</td><td>111</td></tr>
+        <tr><td>2</td><td>client</td><td>Мария Сидорова</td><td>222</td></tr>
+        <tr><td>3</td><td>courier</td><td>Курьер 1</td><td>333</td></tr>
+        <tr><td>4</td><td>courier</td><td>Курьер 2</td><td>444</td></tr>
+    </table>
+
+    <h3>Рестораны (restaurants)</h3>
+    <table>
+        <tr><th>restaurant_id</th><th>name</th><th>rating_avg</th></tr>
+        <tr><td>1</td><td>Пиццерия</td><td>5.00</td></tr>
+        <tr><td>2</td><td>Суши Бар</td><td>4.00</td></tr>
+    </table>
+
+    <h3>Меню (menu_items)</h3>
+    <table>
+        <tr><th>item_id</th><th>category_id</th><th>name</th><th>price</th></tr>
+        <tr><td>1</td><td>1</td><td>Маргарита</td><td>500</td></tr>
+        <tr><td>2</td><td>1</td><td>Пепперони</td><td>600</td></tr>
+        <tr><td>3</td><td>2</td><td>Филадельфия</td><td>700</td></tr>
+        <tr><td>4</td><td>2</td><td>Калифорния</td><td>650</td></tr>
+    </table>
+
+    <h3>Заказы (orders)</h3>
+    <table>
+        <tr><th>order_id</th><th>client_id</th><th>restaurant_id</th><th>status</th><th>total_amount</th></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>delivered</td><td>1000</td></tr>
+        <tr><td>2</td><td>2</td><td>2</td><td>delivered</td><td>700</td></tr>
+        <tr><td>3</td><td>1</td><td>1</td><td>created</td><td>500</td></tr>
+    </table>
+
+    <h3>Отзывы (reviews)</h3>
+    表
+        <tr><th>review_id</th><th>restaurant_id</th><th>client_id</th><th>rating</th></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>5</td></tr>
+        <tr><td>2</td><td>2</td><td>2</td><td>4</td></tr>
+    </table>
+
+    <p>✅ Полная структура и все связи описаны в ER-диаграмме. SQL-скрипт создания таблиц и запросы вы можете посмотреть в файле <code>schema.sql</code> в репозитории.</p>
+</div>
+
 </body>
 </html>
